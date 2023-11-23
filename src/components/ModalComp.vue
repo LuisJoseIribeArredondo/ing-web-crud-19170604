@@ -82,15 +82,15 @@
         </div>
       </div>
     </div>
-    <div class="card-body col d-flex justify-content-center" v-for="miEmpleado in empleados">
-    <div class="accordion" id="accordionExample">
+    <div class="card-body col d-flex justify-content-center" v-for="(miEmpleado, index) in empleados" :key="index">
+    <div class="accordion" id="accordionEmpleados">
   <div class="accordion-item" >
     <h2 class="accordion-header" id="headingOne">
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
         -Empleado: {{ miEmpleado.nombre }}
       </button>
     </h2>
-    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionEmpleados">
       <div class="accordion-body text-start">
         <p>ID: {{ miEmpleado.id }}</p> <br>
         <p>Nombre: {{ miEmpleado.nombre }}</p> <br>
@@ -99,6 +99,9 @@
         <p>Fecha de contratacion: {{ miEmpleado.fecha }}</p> <br>
         <p>Fecha de creacion: {{ miEmpleado.creado }}</p> <br>
       </div>
+      <button type="button" @click="eliminarEmpleado(index)" class="btn btn-danger btn-sm float-right">
+        Eliminar empleado
+      </button>
     </div>
   </div>
   </div>
@@ -173,6 +176,10 @@ export default {
         this.empleados = JSON.parse(storedEmpleados);
       }
     },
+    eliminarEmpleado(index){
+        this.empleados.splice(index,1);
+        localStorage.setItem('empleadosTXT', JSON.stringify(this.empleados));
+    }
   },
 };
 </script>
