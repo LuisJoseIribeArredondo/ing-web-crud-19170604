@@ -89,6 +89,93 @@
       <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
         -Empleado: {{ miEmpleado.nombre }}
       </button>
+      <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#myModalEditar" >
+      Modificar
+    </button>
+    <!--Modificar-->
+    <div class="modal" tabindex="-1" role="dialog" v-show="mostrar" id="myModalEditar" >
+      <!-- ... (resto del contenido del modal de edición) -->
+      <div class="modal-dialog modal-dialog-scrollable">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title">Modificar Empleados</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                
+            
+          </div>
+          <div class="modal-body">
+            <div class="">
+              <!--Id-->
+              <label for="lblIdEmp" class="form-label">Id del Empleado</label>
+              <input
+                type="text"
+                class="form-control inputEmpleado"
+                id="inputId"
+                placeholder="miEmpleado.id || 'Id no disponible'"
+                v-model="miEmpleado.id"
+                
+              />
+              <hr class="division" />
+              <!--Nombre-->
+              <label for="lblNombreEmp" class="form-label"
+                >Nombre del Empleado</label
+              >
+              <input
+                type="text"
+                class="form-control inputEmpleado"
+                id="inputNombre"
+                placeholder="nombre del empleado"
+                v-model="miEmpleado.nombre"
+              />
+              <hr class="division" />
+              <!--Departamento-->
+              <label for="lblDepartamentoEmp" class="form-label"
+                >Departamento del Empleado</label
+              >
+              <input
+                type="text"
+                class="form-control inputEmpleado"
+                id="inputDepartamento"
+                placeholder="Departamento del empleado"
+                v-model="miEmpleado.departamento"
+              />
+              <hr class="division" />
+              <!--Salario-->
+              <label for="lblSalarioEmp" class="form-label"
+                >Salario del Empleado</label
+              >
+              <input
+                type="text"
+                class="form-control inputEmpleado"
+                id="inputSalario"
+                placeholder="Salario del empleado"
+                v-model="miEmpleado.salario"
+              />
+              <hr class="division" />
+              <!--Fecha de contratacion-->
+              <label for="lblNombreEmp" class="form-label"
+                >Fecha de contratacion</label
+              >
+              <input type="date" class="form-control inputEmpleado" id="inputFecha" v-model="miEmpleado.fecha"/>
+              <hr class="division" />
+              <!--Creado en-->
+              <label for="lblNombreEmp" class="form-label">Creado en</label>
+              <input type="date" class="form-control inputEmpleado" id="inputCreado" v-model="miEmpleado.creado"/>
+              <hr class="division" />
+            </div>
+        </div>
+
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" @click="guardarEdicionEmpleado(miEmpleado, index)"> Guardar</button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <button type="button" @click="eliminarEmpleado(index)" class="btn btn-danger btn-sm float-right">
+        Eliminar empleado
+      </button>
     </h2>
     <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionEmpleados">
       <div class="accordion-body text-start">
@@ -99,15 +186,14 @@
         <p>Fecha de contratacion: {{ miEmpleado.fecha }}</p> <br>
         <p>Fecha de creacion: {{ miEmpleado.creado }}</p> <br>
       </div>
-      <button type="button" @click="eliminarEmpleado(index)" class="btn btn-danger btn-sm float-right">
-        Eliminar empleado
-      </button>
+
     </div>
   </div>
   </div>
 
         
     </div>
+        <!-- Agregar el formulario de edición -->
   </div>
 </template>
 
@@ -115,6 +201,8 @@
 export default {
   data() {
     return {
+        mostrarEditar: false,
+      empleadoSeleccionado: null,
         mostrar: false,
       empleados: [],
       miEmpleado: {
@@ -179,7 +267,46 @@ export default {
     eliminarEmpleado(index){
         this.empleados.splice(index,1);
         localStorage.setItem('empleadosTXT', JSON.stringify(this.empleados));
-    }
+    },
+    mostrarModalEditar(miEmpleado, index) {
+      // Mostrar el modal de edición
+      this.mostrarEditar = true;
+      // Almacenar el empleado seleccionado para edición
+      this.empleadoSeleccionado = { ...miEmpleado, index };
+    },
+    validarEmpleado(miEmpleado) {
+    return (
+      miEmpleado.id &&
+      miEmpleado.nombre &&
+      miEmpleado.departamento &&
+      miEmpleado.salario &&
+      miEmpleado.fecha &&
+      miEmpleado.creado
+    );
+  },
+
+    cerrarModalEditar() {
+      // Cerrar el modal de edición
+      this.mostrarEditar = false;
+      // Limpiar el empleado seleccionado
+      this.empleadoSeleccionado = null;
+    },
+
+    guardarEdicionEmpleado(miEmpleado, index) {
+      // Validar y guardar los cambios en el empleado seleccionado
+      if (this.validarEmpleado(miEmpleado)) {
+        // Actualizar el empleado en el arreglo
+        this.empleados.toSpliced(this.miEmpleado, index, { ...this.miEmpleado });
+        // Guardar empleados en localStorage
+        localStorage.setItem('empleadosTXT', JSON.stringify(this.empleados));
+        // Cerrar el modal de edición
+        this.cerrarModalEditar();
+        // Mostrar un mensaje o realizar otras acciones si es necesario
+        alert("Empleado modificado con éxito!");
+      } else {
+        alert("Por favor, complete todos los campos antes de guardar.");
+      }
+    },
   },
 };
 </script>
